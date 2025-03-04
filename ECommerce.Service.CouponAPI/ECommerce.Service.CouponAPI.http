@@ -1,0 +1,6 @@
+@ECommerce.Service.CouponAPI_HostAddress = http://localhost:5170
+
+GET {{ECommerce.Service.CouponAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

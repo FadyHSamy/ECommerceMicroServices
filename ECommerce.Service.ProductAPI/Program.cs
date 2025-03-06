@@ -1,8 +1,9 @@
 using AutoMapper;
-using ECommerce.Service.CouponAPI;
-using ECommerce.Service.CouponAPI.Data;
-using ECommerce.Service.CouponAPI.Extensions;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using ECommerce.Service.ProductAPI;
+using ECommerce.Service.ProductAPI.Data;
+using ECommerce.Service.ProductAPI.Extensions;
+using ECommerce.Service.ProductAPI.Services;
+using ECommerce.Service.ProductAPI.Services.IServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,13 +19,18 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddControllers();
+
+builder.Services.AddScoped<IProductService, ProductService>();
+
+
 IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+builder.Services.AddHttpClient("Coupon", u => u.BaseAddress =
+new Uri(builder.Configuration["ServiceUrls:CouponAPI"]));
 
-
-builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddSwaggerGen(option =>
 {
@@ -66,6 +72,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -74,6 +81,7 @@ app.MapControllers();
 MigrateDatabase(app);
 
 app.Run();
+
 
 void MigrateDatabase(IApplicationBuilder app)
 {

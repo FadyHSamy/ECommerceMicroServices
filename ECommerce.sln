@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.MessageBus", "ECo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.EmailAPI", "ECommerce.EmailAPI\ECommerce.EmailAPI.csproj", "{FC793100-099A-40BA-A662-1EAE1BD56338}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.GatewaySolution", "ECommerce.GatewaySolution\ECommerce.GatewaySolution.csproj", "{49BFF68F-C69A-437B-9FA7-DEE4C58D7EB8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{FC793100-099A-40BA-A662-1EAE1BD56338}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC793100-099A-40BA-A662-1EAE1BD56338}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC793100-099A-40BA-A662-1EAE1BD56338}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49BFF68F-C69A-437B-9FA7-DEE4C58D7EB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49BFF68F-C69A-437B-9FA7-DEE4C58D7EB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49BFF68F-C69A-437B-9FA7-DEE4C58D7EB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49BFF68F-C69A-437B-9FA7-DEE4C58D7EB8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,5 +61,6 @@ Global
 		{0F1FBA73-DA69-48E4-B638-10648984ED15} = {9411AB1B-8EC7-4162-A2EE-3D484A290814}
 		{4ABC91E9-FC10-41FC-AB74-CF8290530E78} = {96B77F69-324E-4F99-A249-CB61D2260344}
 		{FC793100-099A-40BA-A662-1EAE1BD56338} = {9411AB1B-8EC7-4162-A2EE-3D484A290814}
+		{49BFF68F-C69A-437B-9FA7-DEE4C58D7EB8} = {DED8B8D6-A85F-4EF4-BCD0-B66C4F8F90F6}
 	EndGlobalSection
 EndGlobal

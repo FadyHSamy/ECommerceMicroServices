@@ -13,6 +13,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.AddSingleton<IAzureServiceBusConsumer, AzureServiceBusConsumer>();
+builder.Services.AddHostedService<RabbitMqAuthConsumer>();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

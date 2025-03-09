@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using ECommerce.Service.AuthAPI.RabbitMQSender;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +47,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+builder.Services.AddScoped<IRabbitMqAuthMessageSender, RabbitMqAuthMessageSender>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddSwaggerGen();
@@ -53,11 +55,13 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Auth API V1");
+    c.RoutePrefix = string.Empty;
+});
 
 app.UseHttpsRedirection();
 

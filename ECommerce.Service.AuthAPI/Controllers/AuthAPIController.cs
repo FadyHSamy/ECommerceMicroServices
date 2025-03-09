@@ -1,6 +1,7 @@
 ﻿using Azure;
 using ECommerce.Service.AuthAPI.Dto;
 using ECommerce.Service.AuthAPI.Dto.Requests;
+using ECommerce.Service.AuthAPI.RabbitMQSender;
 using ECommerce.Service.AuthAPI.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,13 @@ namespace ECommerce.Service.AuthAPI.Controllers
     public class AuthAPIController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly IRabbitMqAuthMessageSender _messageSender;
         private ResponseDto _response;
-        public AuthAPIController(IAuthService authService)
+        public AuthAPIController(IAuthService authService, IRabbitMqAuthMessageSender messageSender)
         {
             _authService = authService;
             _response = new ResponseDto();
+            _messageSender = messageSender;
         }
 
 
@@ -25,12 +28,15 @@ namespace ECommerce.Service.AuthAPI.Controllers
         {
             var errorMessage = await _authService.Register(request);
 
-            if (!string.IsNullOrEmpty(errorMessage))
+            if (string.IsNullOrEmpty(errorMessage))
             {
                 _response.IsSuccess = false;
                 _response.Message = errorMessage;
                 return BadRequest(_response);
             }
+
+            await _messageSender.SendMessageAsync(request.Email, "RegisterUserQueue");
+
             return Ok(_response);
         }
 

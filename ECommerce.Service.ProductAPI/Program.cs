@@ -1,14 +1,16 @@
 using AutoMapper;
+using ECommerce.MessageBus;
 using ECommerce.Service.ProductAPI;
 using ECommerce.Service.ProductAPI.Data;
 using ECommerce.Service.ProductAPI.Extensions;
+using ECommerce.Service.ProductAPI.ExternalServices;
+using ECommerce.Service.ProductAPI.ExternalServices.Interface;
 using ECommerce.Service.ProductAPI.Services;
 using ECommerce.Service.ProductAPI.Services.IServices;
+using ECommerce.Service.ProductAPI.Utility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICouponServices, CouponServices>();
+builder.Services.AddScoped<IMessageBus, MessageBus>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<BackendApiAuthenticationHttpClientHandler>();
 
 
 IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
@@ -29,7 +35,7 @@ builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddHttpClient("Coupon", u => u.BaseAddress =
-new Uri(builder.Configuration["ServiceUrls:CouponAPI"]));
+new Uri(builder.Configuration["ServiceUrls:CouponAPI"])).AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddSwaggerGen(option =>
@@ -93,3 +99,4 @@ void MigrateDatabase(IApplicationBuilder app)
         db.Database.Migrate();
     }
 }
+

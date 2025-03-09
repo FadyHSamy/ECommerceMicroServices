@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Azure;
-using ECommerce.Service.AuthAPI.Dto;
+using ECommerce.MessageBus;
 using ECommerce.Service.ProductAPI.Data;
 using ECommerce.Service.ProductAPI.Dto;
+using ECommerce.Service.ProductAPI.ExternalServices.Interface;
 using ECommerce.Service.ProductAPI.Models;
 using ECommerce.Service.ProductAPI.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
@@ -21,24 +22,35 @@ namespace ECommerce.Service.ProductAPI.Controllers
         private ResponseDto _response;
         private IMapper _mapper;
         private readonly AppDbContext _context;
-        public ProductController(IProductService productService, IMapper mapper, AppDbContext context)
+        private ICouponServices _couponServices;
+        private readonly IMessageBus _messageBus;
+        private IConfiguration _configuration;
+
+        public ProductController(IProductService productService, IMapper mapper, AppDbContext context
+            , ICouponServices couponServices, IMessageBus messageBus, IConfiguration configuration)
         {
             _productService = productService;
             _response = new ResponseDto();
             _mapper = mapper;
             _context = context;
+            _couponServices = couponServices;
+            _messageBus = messageBus;
+            _configuration = configuration;
         }
 
         [HttpGet]
-        public ResponseDto Get()
+        public async Task<ResponseDto> Get()
         {
             try
             {
                 IEnumerable<Product> products = _context.Products.ToList();
 
-                var couponsDto = _mapper.Map<IEnumerable<ProductDTO>>(products);
+                var productDto = _mapper.Map<IEnumerable<ProductDTO>>(products);
 
-                _response.Result = couponsDto;
+                _response.Result = productDto;
+
+                var response = await _couponServices.GetCouponByCode("10OFF");
+
             }
             catch (Exception ex)
             {
@@ -119,6 +131,23 @@ namespace ECommerce.Service.ProductAPI.Controllers
                 _context.Products.Remove(product);
                 _context.SaveChanges();
 
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
+
+        [HttpPost]
+        [Route("EmailProductRequest")]
+        public async Task<ResponseDto> EmailProductRequest([FromQuery]string message)
+        {
+            try
+            {
+               await _messageBus.PublishMessage(message, _configuration.GetValue<string>("TopicAndQueueNames:EmailProductQueue"));
+                _response.Result = "thanks";
             }
             catch (Exception ex)
             {

@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Service.AuthAPI.Dto
+﻿namespace ECommerce.Service.ProductAPI.Dto
 {
     public class ResponseDto
     {
